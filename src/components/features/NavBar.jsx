@@ -1,7 +1,20 @@
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useState } from 'react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function Navbar() {
+  const { currentUser, logout, isStudent, isInstructor } = useAuth();
+  const navigate = useNavigate();
+
+  const [dropdownOpen,setDropdownOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/home');
+  }
+
   return (
     <nav className="bg-black text-white shadow-lg fixed w-full top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -25,15 +38,14 @@ export default function Navbar() {
             </Link>
 
 
-            <>
-
-              <Link to="/profile" className="text-base hover:text-red-500 transition-colors whitespace-nowrap cursor-pointer">
+            {currentUser ? (<>
+              {isStudent && (<Link to="/profile" className="text-base hover:text-red-500 transition-colors whitespace-nowrap cursor-pointer">
                 Mon Espace
-              </Link>
+              </Link>)}
 
-              <Link to="/instructor-profile" className="text-base hover:text-red-500 transition-colors whitespace-nowrap cursor-pointer">
+              {isInstructor && (<Link to="/instructor-profile" className="text-base hover:text-red-500 transition-colors whitespace-nowrap cursor-pointer">
                 Espace Professeur
-              </Link>
+              </Link>)}
 
 
               {/* User dropdown */}
@@ -44,24 +56,26 @@ export default function Navbar() {
                 >
                   <div className="w-7 h-7 flex items-center justify-center rounded-full overflow-hidden flex-shrink-0">
                     <img
-                      src={null}
-                      alt={null}
+                      src={currentUser.avatar}
+                      alt={currentUser.name}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <span className="text-sm font-semibold max-w-[120px] truncate">{'aly'}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold whitespace-nowrap ${1 == 1 ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-200'
+                  <span className="text-sm font-semibold max-w-[120px] truncate">{currentUser.name}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold whitespace-nowrap ${isInstructor ? 'bg-red-600 text-white' : 'bg-gray-600 text-gray-200'
                     }`}>
-                    {1 == 1 ? 'Prof' : 'Étudiant'}
+                    {isInstructor ? 'Prof' : 'Étudiant'}
                   </span>
-                  <i className={`ri-arrow-down-s-line text-gray-400 transition-transform ${1 == 1 ? 'rotate-180' : ''}`}></i>
+                  
+                  
+                  { dropdownOpen ? <ChevronUp/> : <ChevronDown/>}
                 </button>
 
-                {1 == 3 && (
+                {dropdownOpen && (
                   <>
                     <div
                       className="fixed inset-0 z-10"
-                      onClick={() => { }}
+                      onClick={() => { setDropdownOpen(false)}}
                     ></div>
                     <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 z-20 overflow-hidden">
                       <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
@@ -96,7 +110,7 @@ export default function Navbar() {
                       </div>
                       <div className="border-t border-gray-100 py-1">
                         <button
-                          onClick={() => { }}
+                          onClick={ handleLogout }
                           className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                         >
                           <i className="ri-logout-box-line text-base"></i>
@@ -107,15 +121,15 @@ export default function Navbar() {
                   </>
                 )}
               </div>
-            </>
-
-            <Link
+            </>) : <Link
               to="/login"
               className="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-lg transition-colors whitespace-nowrap cursor-pointer font-semibold flex items-center gap-2"
             >
               <i className="ri-login-box-line"></i>
               Se connecter
-            </Link>
+            </Link>}
+
+
 
           </div>
 

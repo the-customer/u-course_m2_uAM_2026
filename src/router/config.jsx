@@ -16,7 +16,7 @@ const routes = [
         element: <MainLayout />,
         children: [
             {
-                path: "/",
+                path: "/home",
                 element: <HomePage />
             },
             {

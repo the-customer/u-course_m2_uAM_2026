@@ -1,10 +1,20 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LeftSide from "./components/LeftSide";
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+
+
 
 export default function LoginPage() {
-    const [email,setEmail] = useState();
-    const [password,setPassword] = useState();
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const DEMO_ACCOUNTS = [
         {
@@ -30,9 +40,24 @@ export default function LoginPage() {
         },
     ];
 
-    function handleSubmit() { }
+    async function handleSubmit(e) { 
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const user = await login(email,password);
+            if(user.role === 'instructor'){
+                navigate('/instructor-profile')
+            }else{
+                navigate('/profile')
+            }
+        } catch (error) {
+            setError(error.message)
+        }finally{
+            setLoading(false);
+        }
+    }
 
-    function fillDemo(email){
+    function fillDemo(email) {
         setEmail(email);
         setPassword('password123');
     }
@@ -104,12 +129,12 @@ export default function LoginPage() {
 
                     {/* Form */}
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* {error && (
+                        {error && (
                             <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
                                 <i className="ri-error-warning-line flex-shrink-0"></i>
-                                <span>{'error'}</span>
+                                <span>{error}</span>
                             </div>
-                        )} */}
+                        )}
 
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-1.5">
@@ -139,8 +164,7 @@ export default function LoginPage() {
                                     <i className="ri-lock-line text-base"></i>
                                 </div>
                                 <input
-                                    // type={showPassword ? 'text' : 'password'}
-                                    type="password"
+                                    type={ showPassword ? 'text' : 'password' }
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
@@ -149,21 +173,21 @@ export default function LoginPage() {
                                 />
                                 <button
                                     type="button"
-                                    // onClick={() => setShowPassword(!showPassword)}
+                                    onClick={() => setShowPassword(!showPassword)}
                                     className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600 cursor-pointer"
                                 >
-                                    <i className={1 == 1 ? 'ri-eye-off-line' : 'ri-eye-line'}></i>
+                                    {showPassword ? <EyeOff /> : <Eye />}
                                 </button>
                             </div>
                         </div>
 
                         <button
                             type="submit"
-                            // disabled={loading}
-                            className={`w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold text-sm transition-all whitespace-nowrap cursor-pointer flex items-center justify-center gap-2 ${1 == 1 ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-lg hover:shadow-red-200'
+                            disabled={loading}
+                            className={`w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg font-bold text-sm transition-all whitespace-nowrap flex items-center justify-center gap-2 ${loading ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-lg hover:shadow-red-200 cursor-pointer'
                                 }`}
                         >
-                            {1 == 2 ? (
+                            {loading ? (
                                 <>
                                     <i className="ri-loader-4-line animate-spin"></i>
                                     Connexion en cours...
