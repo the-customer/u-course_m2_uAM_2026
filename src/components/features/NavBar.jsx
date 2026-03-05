@@ -14,7 +14,6 @@ export default function Navbar() {
     logout();
     navigate('/home');
   }
-
   return (
     <nav className="bg-black text-white shadow-lg fixed w-full top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,26 +78,26 @@ export default function Navbar() {
                     ></div>
                     <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 z-20 overflow-hidden">
                       <div className="px-4 py-3 border-b border-gray-100 bg-gray-50">
-                        <p className="text-sm font-bold text-gray-900 truncate">{'aly tall'}</p>
-                        <p className="text-xs text-gray-500 truncate">{'email'}</p>
+                        <p className="text-sm font-bold text-gray-900 truncate">{currentUser.name}</p>
+                        <p className="text-xs text-gray-500 truncate">{currentUser.email}</p>
                       </div>
                       <div className="py-1">
-                        <Link
+                        {isStudent && <Link
                           to="/profile"
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-red-600 transition-colors cursor-pointer"
                         >
                           <i className="ri-user-line text-base"></i>
                           Mon Profil
-                        </Link>
-                        <Link
+                        </Link>}
+                        {isInstructor && <Link
                           to="/instructor-profile"
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-red-600 transition-colors cursor-pointer"
                         >
                           <i className="ri-shield-star-line text-base"></i>
                           Espace Professeur
-                        </Link>
+                        </Link>}
                         <Link
                           to="/courses"
                           onClick={() => setDropdownOpen(false)}
